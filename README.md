@@ -13,8 +13,8 @@ Au lieu de configurer Jenkins manuellement via l'interface graphique (clics), ce
 
 ## Structure du Projet
 *   `Dockerfile` : Construit l'image Jenkins avec les plugins nécessaires.
-*   `configuration.yml` : Configuration JCasC (Utilisateurs, Rôles, Sécurité).
-*   `init-jobs.groovy` : Script d'initialisation créant le dossier `Tools` et les jobs `SEED` et `clone-repository`.
+*   `my_marvin.yml` : Configuration JCasC (Utilisateurs, Rôles, Sécurité).
+*   `job_dsl.groovy` : Script Job DSL créant le dossier `Tools` et les jobs `SEED` et `clone-repository`.
 *   `.env` : Fichier contenant les secrets et variables d'environnement (non versionné).
 
 ---
@@ -36,7 +36,7 @@ USER_NASSO_PASSWORD=votre_mot_de_passe
 
 
 JAVA_OPTS=-Djenkins.install.runSetupWizard=false
-CASC_JENKINS_CONFIG=/var/jenkins_home/configuration.yml
+CASC_JENKINS_CONFIG=/var/jenkins_home/my_marvin.yml
 
 ```
 
@@ -53,8 +53,7 @@ Lancer votre instance
 
 docker run -d \
   --name jenkins \
-  -p 8080:8080 \
-  --dns 8.8.8.8 \
+  --network host \
   --env-file .env \
   -v jenkins_home:/var/jenkins_home \
   -v $(pwd)/my_marvin.yml:/var/jenkins_home/my_marvin.yml \
