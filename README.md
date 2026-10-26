@@ -1,56 +1,41 @@
-# My_Marvin - Automatisation Jenkins via Docker
+# Jenkins Marvin
 
-## But du projet
-**My_Marvin** est un projet d'infrastructure-as-code dont l'objectif est de déployer une instance **Jenkins** entièrement configurée de manière automatique. 
+Infrastructure-as-code project that deploys a fully configured **Jenkins** instance with zero manual setup, using **Docker**, **JCasC (Jenkins Configuration as Code)** and **Job DSL**.
 
-Au lieu de configurer Jenkins manuellement via l'interface graphique (clics), ce projet utilise **Docker**, **JCasC (Jenkins Configuration as Code)** et **Job DSL** pour :
-1.  Déployer un serveur Jenkins prêt à l'emploi.
-2.  Gérer les utilisateurs et leurs permissions via une stratégie de rôles (Admin, Gorilla, Ape, Assist).
-3.  Créer automatiquement une structure de dossiers et des jobs de maintenance.
-4.  Mettre en place un job **SEED** capable de générer dynamiquement d'autres jobs de compilation (CI) pour des projets C (Make).
+## What it does
 
----
+1. Builds a ready-to-use Jenkins server image with the required plugins.
+2. Manages users and permissions through a role-based strategy (Admin, Gorilla, Ape, Assist).
+3. Automatically creates a folder structure and maintenance jobs.
+4. Provides a **SEED** job that dynamically generates CI jobs (build and test) for C projects using Make.
 
-## Structure du Projet
-*   `Dockerfile` : Construit l'image Jenkins avec les plugins nécessaires.
-*   `my_marvin.yml` : Configuration JCasC (Utilisateurs, Rôles, Sécurité).
-*   `job_dsl.groovy` : Script Job DSL créant le dossier `Tools` et les jobs `SEED` et `clone-repository`.
-*   `.env` : Fichier contenant les secrets et variables d'environnement (non versionné).
+## Project structure
 
----
+| File | Purpose |
+|---|---|
+| `Dockerfile` | Builds the Jenkins image with the required plugins |
+| `my_marvin.yml` | JCasC configuration: users, roles, security |
+| `job_dsl.groovy` | Job DSL script creating the `Tools` folder and the `SEED` and `clone-repository` jobs |
+| `.env` | Secrets and environment variables (not versioned, see `.env.example`) |
 
+## Getting started
 
-## Installation et Déploiement
+### 1. Prerequisites
+Docker installed on a Linux host.
 
-### 1. Prérequis
-Assurez-vous que **Docker** est installé sur votre machine Ubuntu.
-
-### 2. Préparation des secrets
-Créez un fichier `.env` à la racine du projet et remplissez les variables suivantes :
+### 2. Secrets
+Copy the example file and set the user passwords:
 ```bash
-
-USER_CHOCOLATEEN_PASSWORD=votre_mot_de_passe
-USER_VAUGIE_G_PASSWORD=votre_mot_de_passe
-USER_I_DONT_KNOW_PASSWORD=votre_mot_de_passe
-USER_NASSO_PASSWORD=votre_mot_de_passe
-
-
-JAVA_OPTS=-Djenkins.install.runSetupWizard=false
-CASC_JENKINS_CONFIG=/var/jenkins_home/my_marvin.yml
-
+cp .env.example .env
 ```
 
-### 3. Build
-
-Lancer votre conteneur
+### 3. Build the image
 ```bash
-
 docker build --network=host -t my-marvin .
-
 ```
-Lancer votre instance
-```bash
 
+### 4. Run the instance
+```bash
 docker run -d \
   --name jenkins \
   --network host \
@@ -59,5 +44,9 @@ docker run -d \
   -v $(pwd)/my_marvin.yml:/var/jenkins_home/my_marvin.yml \
   -e CASC_JENKINS_CONFIG=/var/jenkins_home/my_marvin.yml \
   my-marvin
-
 ```
+Jenkins is then available on `http://localhost:8080`, already configured: no setup wizard.
+
+## Author
+
+[Ridwane777](https://github.com/Ridwane777)
