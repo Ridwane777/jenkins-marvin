@@ -5,7 +5,7 @@ Infrastructure-as-code project that deploys a fully configured **Jenkins** insta
 ## What it does
 
 1. Builds a ready-to-use Jenkins server image with the required plugins.
-2. Manages users and permissions through a role-based strategy (Admin, Gorilla, Ape, Assist).
+2. Manages users and permissions through a role-based strategy (admin, maintainer, developer, viewer).
 3. Automatically creates a folder structure and maintenance jobs.
 4. Provides a **SEED** job that dynamically generates CI jobs (build and test) for C projects using Make.
 
@@ -14,7 +14,7 @@ Infrastructure-as-code project that deploys a fully configured **Jenkins** insta
 | File | Purpose |
 |---|---|
 | `Dockerfile` | Builds the Jenkins image with the required plugins |
-| `my_marvin.yml` | JCasC configuration: users, roles, security |
+| `jenkins.yaml` | JCasC configuration: users, roles, security |
 | `job_dsl.groovy` | Job DSL script creating the `Tools` folder and the `SEED` and `clone-repository` jobs |
 | `.env` | Secrets and environment variables (not versioned, see `.env.example`) |
 
@@ -31,7 +31,7 @@ cp .env.example .env
 
 ### 3. Build the image
 ```bash
-docker build --network=host -t my-marvin .
+docker build --network=host -t jenkins-casc .
 ```
 
 ### 4. Run the instance
@@ -41,12 +41,16 @@ docker run -d \
   --network host \
   --env-file .env \
   -v jenkins_home:/var/jenkins_home \
-  -v $(pwd)/my_marvin.yml:/var/jenkins_home/my_marvin.yml \
-  -e CASC_JENKINS_CONFIG=/var/jenkins_home/my_marvin.yml \
-  my-marvin
+  -v $(pwd)/jenkins.yaml:/var/jenkins_home/jenkins.yaml \
+  -e CASC_JENKINS_CONFIG=/var/jenkins_home/jenkins.yaml \
+  jenkins-casc
 ```
 Jenkins is then available on `http://localhost:8080`, already configured: no setup wizard.
 
 ## Author
 
 [Ridwane777](https://github.com/Ridwane777)
+
+## License
+
+[MIT](LICENSE)
